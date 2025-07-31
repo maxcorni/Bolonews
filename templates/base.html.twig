@@ -1,17 +1,150 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    {% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% block meta %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A Symfony project created on August 2023">
+    {% endblock %}
+
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="top-header">
+            <div class="nav-left">
+                <h2 class="logo"><a href="#">BoloNews</a></h2>
+            </div>                    
+            <ul class="nav-main">
+                <li><a href="{{ path('article_index') }}">Home</a></li>
+                <li><a href="{{ path('article_list') }}">Articles</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+            <ul class="nav-right">
+                {% if app.user %}
+                    <li><a href="{{ path('article_user_list')}}">Mon espace {{ ux_icon('lucide:user') }}</a></li>
+                    <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}">Se connecter</a></li>
+                    <li><a href="{{ path('app_register') }}">M'inscrire</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <div class="bottom-header">
+            <h2>BoloNews</h2>
+            <p>Les meilleures sauces pour les pâtes et de l’actualité sur le grill</p>
+        </div>
+
+        <hr>
+    </header>
+
+    <main>
+        {% block body %}
         {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <h2>Overcome Ignorance and <br>Fight for Equality</h2>
+                <div class="footer-buttons">
+                    <button class="btn-outline">receive news</button>
+                    <button class="btn-filled">donate</button>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>NAVIGATION</h4>
+                    <ul>
+                        <li>Home</li>
+                        <li>About Us</li>
+                        <li>What We Do</li>
+                        <li>To The Power of 10</li>
+                        <li>Donate</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>WHAT WE DO</h4>
+                    <ul>
+                        <li>Encouraging Testing</li>
+                        <li>Strengthening Advocacy</li>
+                        <li>Sharing Information</li>
+                        <li>Building Leadership</li>
+                        <li>Engaging With Global Fund</li>
+                        <li>Shining a Light</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>LEGAL</h4>
+                    <ul>
+                        <li>General Info</li>
+                        <li>Privacy Policy</li>
+                        <li>Terms of Service</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>TALK TO US</h4>
+                    <ul>
+                        <li>support@ercom.com</li>
+                        <li>+66 2399 1145</li>
+                        <li>Contact Us</li>
+                        <li>Facebook</li>
+                        <li>Linkedin</li>
+                        <li>Twitter</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="footer-bottom">
+                <p>© 2019 Lift Media. All Rights Reserved.</p>
+                <div class="footer-socials">
+                    <a href="#">{{ ux_icon('bi:facebook') }}</a>
+                    <a href="#">{{ ux_icon('bi:linkedin') }}</a>
+                    <a href="#">{{ ux_icon('bi:twitter-x') }}</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="message-flash {{ type }}">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <script>
+        // au bout de quelques secondes :
+        setTimeout(() => { // je reucpere les div que je veux manipuler dans le dom
+            let flashes = document.querySelectorAll(".message-flash")
+            // pour chacun des messages flash =>
+            if (flashes) {
+                flashes.forEach(elt => { // je fais descendre la div
+                    elt.style.bottom = "-100px";
+                    // une fois l'naimation terminée
+                    setTimeout(() => {
+                        elt.remove()
+                    }, 1000)
+                    // je supprime la div
+                })
+            }
+        }, 4000)
+    </script>
+</body>
 </html>

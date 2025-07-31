@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des articles de l'utilisateur{% endblock %}
+
+{% block body %}
+    {% include 'article/_filter.html.twig' %}
+    <div class="container">
+        <a href="{{ path('article_create') }}" class="primary-btn">Créer un nouvel article</a>
+        <a href="{{ path('user_profile', {'id': app.user.id}) }}" class="primary-btn">Voir le profile utilisateur</a>
+        <h2>Mes Articles Publiés</h2>
+        {% if articles is empty %}
+            <p>Aucun article trouvé.</p>
+        {% else %}
+            <ul class="article-list">
+                {% for article in publishedArticles %}
+                        {% include 'article/_articleCard.html.twig' %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <h2>Mes Articles Non Publiés</h2>
+        {% if articles is empty %}
+            <p>Aucun article trouvé.</p>
+        {% else %}
+            <ul class="article-list">
+                {% for article in unpublishedArticles %}
+                        {% include 'article/_articleCard.html.twig' %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

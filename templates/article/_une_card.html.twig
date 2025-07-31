@@ -1,0 +1,37 @@
+
+{% block body %}
+    <div class="article-une-row">
+        <div class="article-card-une">
+            <div class="article-card-une-img">
+                {% if article_une.image %}
+                    <img src="{{ asset('images/articles/' ~ article_une.image) }}" alt="{{ article_une.titre }}">
+                {% else %}
+                    <div class="img-placeholder"></div>
+                {% endif %}
+            </div>
+            <div class="article-card-une-content">
+                <span class="article-category">{{ article_une.categorie.name }}</span>
+                <h1 class="article-title">{{ article_une.titre }}</h1>
+                <p class="article-chapeau">{{ article_une.chapeau }}</p>
+                <div class="article-author-block">
+                    <div class="author-img-placeholder"></div>
+                    <span class="article-author">{{ article_une.auteur.pseudo }}</span>
+                </div>
+                <div class="article-date">publié le {{ article_une.dateCreation|date('d-m-Y à H:i') }}</div>
+                <div class="article-actions">
+                    <span class="article-comments">
+                        {{ ux_icon('bi:chat') }} {{ article_une.commentaires|length }}
+                    </span>
+                    <span class="article-likes">
+                        {{ ux_icon('bi:heart') }} {{ article_une.liked|length }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="article-small-cards">
+            {% for article in articles %}
+                {% include 'article/_small_card.html.twig' with {article: article} %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

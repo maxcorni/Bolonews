@@ -1,0 +1,30 @@
+
+{% block body %}
+    <div class="article-card">
+        <div class="article-card-img">
+            {% if article.image %}
+                <img src="{{ asset('images/articles/' ~ article.image) }}" alt="{{ article.titre }}">
+            {% else %}
+                <div class="img-placeholder"></div>
+            {% endif %}
+        </div>
+        <div class="article-card-content">
+            <span class="article-category">{{ article.categorie.name }}</span>
+            <h2 class="article-title">{{ article.titre }}</h2>
+            <div class="article-author">{{ article.auteur.pseudo }}</div>
+            <div class="article-date">le {{ article.dateCreation|date('d-m-Y à H:i') }}</div>
+            <p class="article-chapeau">{{ article.chapeau }}</p>
+            <div class="article-actions">
+                <span class="article-comments">
+                    {{ ux_icon('bi:chat') }} {{ article.commentaires|length }}
+                </span>
+                <span class="article-likes">
+                    {{ ux_icon('bi:heart') }} {{ article.liked|length }}
+                </span>
+                <a href="{{ path('article_show', {'id': article.id}) }}" class="article-readmore">
+                    Lire la suite {{ ux_icon('bi:arrow-right') }}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

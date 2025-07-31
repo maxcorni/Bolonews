@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+    
+        {{ form_start(form, {'attr' : {'novalidate': 'novalidate', 'data-turbo': 'false','class': 'user-form'}}) }}
+        <h1>Bonjour {{ user.pseudo }}</h1>
+        <img src="{{ asset('images/photoProfile/' ~ user.profilePicture) }}" alt="User Profile" class="user-profile-image">
+
+        {{ form_label(form.email) }}
+        {{ form_widget(form.email, {'attr': {'class':(form.email.vars.errors|length > 0 ? "input-errors" : "")}}) }}
+        <div class="p-error">
+            {{ form_errors(form.email) }}
+        </div>
+
+        {{ form_label(form.pseudo) }}
+        {{ form_widget(form.pseudo, {'attr': {'class':(form.pseudo.vars.errors|length > 0 ? "input-errors" : "")}}) }}
+        <div class="p-error">
+            {{ form_errors(form.pseudo) }}
+        </div>
+
+        {{ form_label(form.imageFile) }}
+        {{ form_widget(form.imageFile, {'attr': {'class': (form.imageFile.vars.errors|length > 0 ? "input-errors" : "")}}) }}
+        <div class="p-error">
+            {{ form_errors(form.imageFile) }}
+        </div>
+
+        {{ form_widget(form) }}
+
+        <input type="submit" value="Enregistrer" class="primary-btn">
+
+        {{ form_end(form) }}
+
+    </div>
+{% endblock %}

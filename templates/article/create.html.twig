@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création d'un article{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {{ form_start(form, {'attr': {'class': 'article-form'}}) }}
+            <h1>Créer un article</h1>
+            
+            {{ form_row(form.titre) }}
+            {{ form_row(form.chapeau) }}
+            {{ form_row(form.contenu) }}
+            {{ form_row(form.categorie) }}
+            {{ form_row(form.imageFile) }}
+            {{ form_row(form.publie) }}
+
+
+            <button type="submit" class="btn">Créer l'article</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

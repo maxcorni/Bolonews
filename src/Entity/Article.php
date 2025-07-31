@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
@@ -17,7 +19,7 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
     private ?string $chapeau = null;
@@ -27,6 +29,13 @@ class Article
 
     #[ORM\Column(length: 255)]
     private ?string $image = null;
+
+    #[Assert\File(
+    maxSize: '2M',
+    mimeTypes: ['image/jpeg', 'image/png'],
+    mimeTypesMessage: "Merci d'uploader une image JPG ou PNG"
+    )]
+    private ?File $imageFile = null;
 
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
@@ -68,14 +77,14 @@ class Article
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitre(): ?string
     {
-        return $this->title;
+        return $this->titre;
     }
 
-    public function setTitle(string $title): static
+    public function setTitre(string $titre): static
     {
-        $this->title = $title;
+        $this->titre = $titre;
 
         return $this;
     }

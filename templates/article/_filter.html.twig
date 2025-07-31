@@ -1,0 +1,22 @@
+
+{% block body %}
+    <div class="search-container">
+        {{ form_start(form, {'method': 'GET', 'attr': {'class': 'search-form'}}) }}
+            <div>
+                {{ form_widget(form.q, {'attr': {'class': 'search-bar'}}) }}
+                <button type="submit" class="search-btn">
+                    {{ ux_icon('lucide:search') }}
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+    <hr>
+    <div class="search-filter">
+        <ul>
+            <li><a href="{{ path('article_list') }}">All</a></li>
+            {% for category in categories %}
+                <li><a href="{{ path('article_list', {'category': category.id}) }}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

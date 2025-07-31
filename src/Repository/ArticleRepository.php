@@ -40,4 +40,48 @@ class ArticleRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+        public function findBySearch($search): array
+        {
+            return $this->createQueryBuilder('p')
+                ->where('p.titre LIKE :search')
+                ->orWhere('p.chapeau LIKE :search')
+                ->orWhere('p.contenu LIKE :search')
+                ->setParameter('search', '%' . $search . '%')
+                ->getQuery()
+                ->getResult();
+        }
+
+        public function findMostLikedByPeriod(?string $period = null): ?Article
+        {
+            $qb = $this->createQueryBuilder('a')
+                ->leftJoin('a.liked', 'l')
+                ->andWhere('a.publie = true');
+
+            if ($period) {
+                $qb->andWhere('a.date_creation >= :date')
+                ->setParameter('date', new \DateTime($period));
+            }
+
+            $qb->groupBy('a.id')
+            ->orderBy('COUNT(l.id)', 'DESC')
+            ->setMaxResults(1);
+
+            return $qb->getQuery()->getOneOrNullResult();
+        }
+
+        public function findMostLikedInLast24HoursOrWeekOrAllTime(): ?Article
+        {
+            $article = $this->findMostLikedByPeriod('-24 hours');
+            if ($article) {
+                return $article;
+            }
+
+            $article = $this->findMostLikedByPeriod('-7 days');
+            if ($article) {
+                return $article;
+            }
+
+            return $this->findMostLikedByPeriod();
+        }
 }
