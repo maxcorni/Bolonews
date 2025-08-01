@@ -1,9 +1,15 @@
 
 {% block body %}
+    {% set currentRoute = app.request.attributes.get('_route') %}
+    {% set targetRoute = currentRoute == 'article_user_list' ? 'article_user_list' : 'article_list' %}
+    
     <div class="search-container">
         {{ form_start(form, {'method': 'GET', 'attr': {'class': 'search-form'}}) }}
             <div>
                 {{ form_widget(form.q, {'attr': {'class': 'search-bar'}}) }}
+                {% if currentCategory %}
+                    <input type="hidden" name="category" value="{{ currentCategory }}">
+                {% endif %}
                 <button type="submit" class="search-btn">
                     {{ ux_icon('lucide:search') }}
                 </button>
@@ -13,9 +19,17 @@
     <hr>
     <div class="search-filter">
         <ul>
-            <li><a href="{{ path('article_list') }}">All</a></li>
+            <li>
+                <a href="{{ path(targetRoute, currentSearch ? {'q': currentSearch} : {}) }}" 
+                   class="{{ not currentCategory ? 'active' : '' }}">All</a>
+            </li>
             {% for category in categories %}
-                <li><a href="{{ path('article_list', {'category': category.id}) }}">{{ category.name }}</a></li>
+                <li>
+                    <a href="{{ path(targetRoute, {'category': category.id} | merge(currentSearch ? {'q': currentSearch} : {})) }}" 
+                       class="{{ currentCategory == category.id ? 'active' : '' }}">
+                        {{ category.libelle }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     </div>

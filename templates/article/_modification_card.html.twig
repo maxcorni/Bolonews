@@ -9,7 +9,16 @@
             {% endif %}
         </div>
         <div class="article-card-content">
-            <span class="article-category">{{ article.categorie.libelle }}</span>
+            <div class="article-actions">
+                <span class="article-category">{{ article.categorie.libelle }}</span>
+                <form method="post" action="{{ path('article_toggle_publish', {'id': article.id}) }}">
+                    {% if article.publie %}
+                        <button type="submit" class="article-category">Dépublier</button>
+                    {% else %}
+                        <button type="submit" class="article-category">Publier</button>
+                    {% endif %}
+                </form>
+            </div>
             <h2 class="article-title">{{ article.titre }}</h2>
             <div class="article-author">{{ article.auteur.pseudo }}</div>
             <div class="article-date">le {{ article.dateCreation|date('d-m-Y à H:i') }}</div>
@@ -21,7 +30,7 @@
                 <span class="article-likes">
                     {{ ux_icon('bi:heart') }} {{ article.liked|length }}
                 </span>
-                <a href="{{ path('article_show', {'id': article.id}) }}" class="article-readmore">
+                <a href="{{ path('article_user_show', {'id': article.id}) }}" class="article-readmore">
                     Lire la suite {{ ux_icon('bi:arrow-right') }}
                 </a>
             </div>

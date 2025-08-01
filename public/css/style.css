@@ -5,6 +5,10 @@ body{
     background-color: #f4f4f4;
 }
 
+.container{
+    width: 80%;
+    margin: 0 auto;
+}
 
 header {
     padding: 1rem;
@@ -577,6 +581,15 @@ main{
     border-radius: inherit;
 }
 
+
+.article-card svg{
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    color: #000000;
+
+}
+
 .article-list {
     display: flex;
     flex-wrap: wrap;
@@ -584,3 +597,4 @@ main{
     justify-content: center;
     align-items: flex-start;
 }   
+

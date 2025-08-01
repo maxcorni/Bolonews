@@ -43,11 +43,58 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findBySearch($search): array
         {
-            return $this->createQueryBuilder('p')
-                ->where('p.titre LIKE :search')
-                ->orWhere('p.chapeau LIKE :search')
-                ->orWhere('p.contenu LIKE :search')
+            return $this->createQueryBuilder('a')
+                ->andWhere('a.publie = true')
+                ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
                 ->setParameter('search', '%' . $search . '%')
+                ->orderBy('a.date_creation', 'DESC')
+                ->getQuery()
+                ->getResult();
+        }
+
+        public function findBySearchAndCategory($search, ?int $categoryId): array
+        {
+            $qb = $this->createQueryBuilder('a')
+                ->andWhere('a.publie = true')
+                ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
+                ->setParameter('search', '%' . $search . '%');
+
+            if ($categoryId) {
+                $qb->andWhere('a.categorie = :categoryId')
+                    ->setParameter('categoryId', $categoryId);
+            }
+
+            return $qb->orderBy('a.date_creation', 'DESC')
+                ->getQuery()
+                ->getResult();
+        }
+
+        public function findBySearchAndAuthor($search, $author): array
+        {
+            return $this->createQueryBuilder('a')
+                ->andWhere('a.auteur = :author')
+                ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
+                ->setParameter('search', '%' . $search . '%')
+                ->setParameter('author', $author)
+                ->orderBy('a.date_creation', 'DESC')
+                ->getQuery()
+                ->getResult();
+        }
+
+        public function findBySearchAndCategoryAndAuthor($search, ?int $categoryId, $author): array
+        {
+            $qb = $this->createQueryBuilder('a')
+                ->andWhere('a.auteur = :author')
+                ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
+                ->setParameter('search', '%' . $search . '%')
+                ->setParameter('author', $author);
+
+            if ($categoryId) {
+                $qb->andWhere('a.categorie = :categoryId')
+                    ->setParameter('categoryId', $categoryId);
+            }
+
+            return $qb->orderBy('a.date_creation', 'DESC')
                 ->getQuery()
                 ->getResult();
         }

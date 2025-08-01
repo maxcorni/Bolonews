@@ -38,7 +38,7 @@ class ArticleType extends AbstractType
             ->add('publie')
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
-                'choice_label' => 'id',
+                'choice_label' => 'libelle',
             ])
         ;
     }

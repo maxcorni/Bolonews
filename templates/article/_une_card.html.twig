@@ -10,7 +10,7 @@
                 {% endif %}
             </div>
             <div class="article-card-une-content">
-                <span class="article-category">{{ article_une.categorie.name }}</span>
+                <span class="article-category">{{ article_une.categorie.libelle }}</span>
                 <h1 class="article-title">{{ article_une.titre }}</h1>
                 <p class="article-chapeau">{{ article_une.chapeau }}</p>
                 <div class="article-author-block">
@@ -27,11 +27,6 @@
                     </span>
                 </div>
             </div>
-        </div>
-        <div class="article-small-cards">
-            {% for article in articles %}
-                {% include 'article/_small_card.html.twig' with {article: article} %}
-            {% endfor %}
         </div>
     </div>
 {% endblock %}

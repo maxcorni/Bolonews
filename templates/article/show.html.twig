@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Details de l'article{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ article.titre }}</h1>
+        <div class="article-details">
+            <div class="article-image">
+                {% if article.image %}
+                    <img src="{{ asset('images/articles/' ~ article.image) }}" alt="{{ article.titre }}">
+                {% else %}
+                    <div class="img-placeholder"></div>
+                {% endif %}
+            </div>
+            <div class="article-content">
+                <p>{{ article.chapeau }}</p>
+                <div class="article-author-block">
+                    <span class="article-author">{{ article.auteur.pseudo }}</span>
+                    <span class="article-date">publié le {{ article.dateCreation|date('d-m-Y à H:i') }}</span>
+                </div>
+                <div class="article-text">{{ article.contenu|raw }}</div>
+            </div>
+        </div>
+        <a href="{{ app.request.headers.get('referer') ?: path('article_index') }}" class="btn">Retour</a>
+    </div>
+{% endblock %}

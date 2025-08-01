@@ -4,4 +4,16 @@
 
 {% block body %}
     {% include 'article/_filter.html.twig' %}
+    <div class="container">
+        <h1>Résultat de votre recherche</h1>
+        {% if articles is empty %}
+            <p>Aucun article trouvé.</p>
+        {% else %}
+            <ul class="article-list">
+                {% for article in articles %}
+                        {% include 'article/_small_card.html.twig' %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 {% endblock %}
