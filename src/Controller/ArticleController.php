@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Commentaire;
 use App\Form\SearchType;
 use App\Form\ArticleType;
+use App\Form\CommentType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,23 +46,17 @@ final class ArticleController extends AbstractController
 
         $categoryId = $request->query->get('category');
 
-        // Get search term if form is submitted
         if ($form->isSubmitted() && $form->isValid()) {
             $searchData = $form->get('q')->getData();
         }
 
-        // Use repository method that combines search and category filter
         if (!empty($searchData) && $categoryId) {
-            // Both search term and category filter
             $articles = $ArticleRepository->findBySearchAndCategory($searchData, $categoryId);
         } elseif (!empty($searchData)) {
-            // Only search term
             $articles = $ArticleRepository->findBySearch($searchData);
         } elseif ($categoryId) {
-            // Only category filter
             $articles = $ArticleRepository->findBy(['categorie' => $categoryId, 'publie' => true]);
         } else {
-            // No filters, show all published articles
             $articles = $ArticleRepository->findBy(['publie' => true], ['date_creation' => 'DESC']);
         }
 
@@ -85,7 +81,6 @@ final class ArticleController extends AbstractController
         $categoryId = $request->query->get('category');
         $currentUser = $this->getUser();
 
-        // Get search term if form is submitted
         if ($form->isSubmitted() && $form->isValid()) {
             $searchData = $form->get('q')->getData();
         }
@@ -118,39 +113,80 @@ final class ArticleController extends AbstractController
     }
 
     #[Route('/user-show/{id}', name: 'article_user_show')]
-    public function userShow(int $id, ArticleRepository $ArticleRepository): Response
+    public function userShow(int $id, ArticleRepository $ArticleRepository, Request $request, EntityManagerInterface $em): Response
     {
         $article = $ArticleRepository->find($id);
         if (!$article) {
+            $this->addFlash('error', 'Article introuvable.');
             throw $this->createNotFoundException('Article not found');
         }
 
-        // Only allow access if the current user is the author
         if ($article->getAuteur() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous n\'êtes pas autorisé à consulter cet article.');
             throw $this->createAccessDeniedException('You are not allowed to view this article');
+        }
+
+        $comment = new Commentaire();
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $comment->setArticle($article);
+            $comment->setAuteur($this->getUser());
+            $comment->setDatePublication(new \DateTime());
+
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('success', 'Commentaire ajouté avec succès !');
+            return $this->redirectToRoute('article_user_show', ['id' => $id]);
+        } elseif ($commentForm->isSubmitted() && !$commentForm->isValid()) {
+            $this->addFlash('error', 'Erreur lors de l\'ajout du commentaire. Veuillez réessayer.');
         }
 
         return $this->render('article/show.html.twig', [
             'article' => $article,
+            'commentForm' => $commentForm->createView(),
+
         ]);
     }
 
 
 
     #[Route('/show/{id}', name: 'article_show')]
-    public function show(int $id, ArticleRepository $ArticleRepository): Response
+    public function show(int $id, ArticleRepository $ArticleRepository, Request $request, EntityManagerInterface $em): Response
     {
         $article = $ArticleRepository->find($id);
         if (!$article) {
+            $this->addFlash('error', 'Article introuvable.');
             throw $this->createNotFoundException('Article not found');
         }
-        // Check if the article is published
         if (!$article->isPublie()) {
+            $this->addFlash('error', 'Cet article n\'est pas encore publié.');
             throw $this->createNotFoundException('Article not published');
         }   
 
+        $comment = new Commentaire();
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $comment->setArticle($article);
+            $comment->setAuteur($this->getUser());
+            $comment->setDatePublication(new \DateTime());
+
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('success', 'Commentaire ajouté avec succès !');
+            return $this->redirectToRoute('article_show', ['id' => $id]);
+        } elseif ($commentForm->isSubmitted() && !$commentForm->isValid()) {
+            $this->addFlash('error', 'Erreur lors de l\'ajout du commentaire. Veuillez réessayer.');
+        }
+
         return $this->render('article/show.html.twig', [
             'article' => $article,
+            'commentForm' => $commentForm->createView(),
         ]);
     }
 
@@ -170,23 +206,74 @@ final class ArticleController extends AbstractController
                 $article->setImage($fileName);
             }
 
-            // Set creation and modification dates
             $now = new \DateTime();
             $article->setDateCreation($now);
             $article->setDateModification($now);
             
-            // Set the author as the current user
             $article->setAuteur($this->getUser());
 
             $em->persist($article);
             $em->flush();
-            $this->addFlash('success', 'Article created successfully!');
+            $this->addFlash('success', 'Article créé avec succès !');
             return $this->redirectToRoute('article_user_list');
 
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
         }
 
         return $this->render('article/create.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/edit/{id}', name: 'article_edit')]
+    public function edit(int $id, Request $request, EntityManagerInterface $em, ArticleRepository $articleRepository): Response
+    {
+        $article = $articleRepository->find($id);
+
+        if (!$article) {
+            $this->addFlash('error', 'Article introuvable.');
+            throw $this->createNotFoundException('Article not found');
+        }
+
+        if ($article->getAuteur() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous n\'êtes pas autorisé à modifier cet article.');
+            throw $this->createAccessDeniedException('You are not allowed to edit this article');
+        }
+
+        $oldImage = $article->getImage();
+
+        $form = $this->createForm(ArticleType::class, $article);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $image = $form->get('imageFile')->getData();
+            if ($image !== null) {
+                if ($oldImage) {
+                    $oldImagePath = $this->getParameter('image_directory') . '/articles/' . $oldImage;
+                    if (file_exists($oldImagePath)) {
+                        @unlink($oldImagePath);
+                    }
+                }
+                $fileName = uniqid() . '.' . $image->guessExtension();
+                $image->move($this->getParameter('image_directory') . '/articles', $fileName);
+                $article->setImage($fileName);
+            }
+
+            $article->setDateModification(new \DateTime());
+
+            $em->persist($article);
+            $em->flush();
+            $this->addFlash('success', 'Article modifié avec succès !');
+            return $this->redirectToRoute('article_user_list');
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
+        }
+
+        return $this->render('article/editer.html.twig', [
+            'form' => $form->createView(),
+            'article' => $article,
         ]);
     }
 
@@ -196,18 +283,16 @@ final class ArticleController extends AbstractController
         $article = $articleRepository->find($id);
         
         if (!$article) {
+            $this->addFlash('error', 'Article introuvable.');
             throw $this->createNotFoundException('Article not found');
         }
 
-        // Only allow the author to toggle publication status
         if ($article->getAuteur() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous n\'êtes pas autorisé à modifier cet article.');
             throw $this->createAccessDeniedException('You are not allowed to modify this article');
         }
 
-        // Toggle the publication status
         $article->setPublie(!$article->isPublie());
-        
-        // Update modification date
         $article->setDateModification(new \DateTime());
 
         $em->persist($article);
@@ -220,7 +305,40 @@ final class ArticleController extends AbstractController
             $this->addFlash('success', 'Article dépublié avec succès !');
         }
 
-        // Redirect back to the user list
         return $this->redirectToRoute('article_user_list');
+    }
+
+    #[Route('/toggle-like/{id}', name: 'article_toggle_like', methods: ['POST'])]
+    public function toggleLike(int $id, ArticleRepository $articleRepository, EntityManagerInterface $em, Request $request): Response
+    {
+        $article = $articleRepository->find($id);
+        
+        if (!$article) {
+            return $this->json(['error' => 'Article not found'], 404);
+        }
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $isLiked = $article->getLiked()->contains($user);
+        
+        if ($isLiked) {
+            $article->removeLiked($user);
+            $liked = false;
+        } else {
+            $article->addLiked($user);
+            $liked = true;
+        }
+
+        $em->persist($article);
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'liked' => $liked,
+            'likeCount' => $article->getLiked()->count()
+        ]);
     }
 }

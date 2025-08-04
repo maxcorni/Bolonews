@@ -13,10 +13,6 @@
         <meta name="description" content="A Symfony project created on August 2023">
     {% endblock %}
 
-
-    {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-    {% endblock %}
 </head>
 <body>
     <header>
@@ -58,8 +54,8 @@
             <div class="footer-top">
                 <h2>Overcome Ignorance and <br>Fight for Equality</h2>
                 <div class="footer-buttons">
-                    <button class="btn-outline">receive news</button>
-                    <button class="btn-filled">donate</button>
+                    <button class="btn btn-outline-primary">receive news</button>
+                    <button class="btn btn-primary">donate</button>
                 </div>
             </div>
 
@@ -146,5 +142,6 @@
             }
         }, 4000)
     </script>
+    <script src="{{ asset('js/likes.js') }}"></script>
 </body>
 </html>

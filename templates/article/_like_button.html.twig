@@ -1,0 +1,12 @@
+{% set isLiked = app.user and article.liked.contains(app.user) %}
+{% set likeCount = article.liked|length %}
+
+<button 
+    class="like-button {{ isLiked ? 'liked' : '' }}" 
+    data-article-id="{{ article.id }}"
+    data-liked="{{ isLiked ? 'true' : 'false' }}"
+    {% if not app.user %}disabled title="Connectez-vous pour aimer cet article"{% endif %}
+>
+    <span class="like-icon">{{ ux_icon('bi:heart') }}</span>
+    <span class="like-count">{{ likeCount }}</span>
+</button>

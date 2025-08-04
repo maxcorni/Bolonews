@@ -19,12 +19,31 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre est obligatoire")]
+    #[Assert\Length(
+        min: 5,
+        max: 255,
+        minMessage: "Le titre doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le chapeau est obligatoire")]
+    #[Assert\Length(
+        min: 10,
+        max: 255,
+        minMessage: "Le chapeau doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le chapeau ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $chapeau = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "Le contenu est obligatoire")]
+    #[Assert\Length(
+        min: 50,
+        minMessage: "Le contenu doit contenir au moins {{ limit }} caractères"
+    )]
     private ?string $contenu = null;
 
     #[ORM\Column(length: 255)]
@@ -44,6 +63,8 @@ class Article
     private ?\DateTime $date_modification = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "Le statut de publication est obligatoire")]
+    #[Assert\Type('bool', message: "Le statut de publication doit être un booléen")]
     private ?bool $publie = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
@@ -52,6 +73,7 @@ class Article
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "La catégorie est obligatoire")]
     private ?Categorie $categorie = null;
 
     /**

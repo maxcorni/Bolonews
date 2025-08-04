@@ -8,14 +8,23 @@
         {{ form_errors(registrationForm) }}
 
         {{ form_start(registrationForm, {'attr': {'class': 'user-form'}}) }}
-            <h1>Register</h1>
+            <h1>Inscription</h1>
             {{ form_label(registrationForm.email) }}
             {{ form_widget(registrationForm.email) }}
+            {{ form_errors(registrationForm.email) }}
+            
+            {{ form_label(registrationForm.pseudo) }}
+            {{ form_widget(registrationForm.pseudo) }}
+            {{ form_errors(registrationForm.pseudo) }}
+            {{ form_help(registrationForm.pseudo) }}
+            
             {{ form_label(registrationForm.plainPassword) }}
             {{ form_widget(registrationForm.plainPassword) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+            
             {{ form_row(registrationForm.agreeTerms) }}
 
-            <button type="submit" class="btn">Register</button>
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
         {{ form_end(registrationForm) }}
     </div>
 {% endblock %}

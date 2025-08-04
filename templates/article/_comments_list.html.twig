@@ -1,0 +1,34 @@
+<div class="comments-section">
+    <h3>Commentaires ({{ article.commentaires|length }})</h3>
+    
+    {% if article.commentaires|length > 0 %}
+        <div class="comments-list">
+            {% for comment in article.commentaires %}
+                <div class="comment-item">
+                    <div class="comment-avatar">
+                        {% if comment.auteur.profilePicture %}
+                            <img src="{{ asset('images/photoProfile/' ~ comment.auteur.profilePicture) }}" alt="{{ comment.auteur.pseudo }}" class="avatar">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                                {{ comment.auteur.pseudo|slice(0, 1)|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ comment.auteur.pseudo }}</span>
+                            <span class="comment-date">{{ comment.datePublication|date('d/m/Y à H:i') }}</span>
+                        </div>
+                        <div class="comment-text">
+                            {{ comment.contenu|nl2br }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-comments">
+            <p>Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+        </div>
+    {% endif %}
+</div>

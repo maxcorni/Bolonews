@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un utilisateur avec cet email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -24,6 +24,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: "L'email est obligatoire")]
+    #[Assert\Email(message: "L'email doit être une adresse email valide")]
+    #[Assert\Length(max: 180, maxMessage: "L'email ne peut pas dépasser {{ limit }} caractères")]
     private ?string $email = null;
 
     /**
@@ -39,6 +42,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le pseudo est obligatoire")]
+    #[Assert\Length(
+        min: 3, 
+        max: 255, 
+        minMessage: "Le pseudo doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères"
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Z0-9_-]+$/",
+        message: "Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores"
+    )]
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 255, nullable: true)]

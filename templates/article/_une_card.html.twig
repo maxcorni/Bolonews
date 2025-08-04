@@ -14,7 +14,13 @@
                 <h1 class="article-title">{{ article_une.titre }}</h1>
                 <p class="article-chapeau">{{ article_une.chapeau }}</p>
                 <div class="article-author-block">
-                    <div class="author-img-placeholder"></div>
+                    {% if article_une.auteur.profilePicture %}
+                        <img src="{{ asset('images/photoProfile/' ~ article_une.auteur.profilePicture) }}" alt="{{ article_une.auteur.pseudo }}" class="author-img">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            {{ article_une.auteur.pseudo|slice(0, 1)|upper }}
+                        </div>
+                    {% endif %}
                     <span class="article-author">{{ article_une.auteur.pseudo }}</span>
                 </div>
                 <div class="article-date">publié le {{ article_une.dateCreation|date('d-m-Y à H:i') }}</div>
@@ -22,9 +28,11 @@
                     <span class="article-comments">
                         {{ ux_icon('bi:chat') }} {{ article_une.commentaires|length }}
                     </span>
-                    <span class="article-likes">
-                        {{ ux_icon('bi:heart') }} {{ article_une.liked|length }}
-                    </span>
+                    {% set article = article_une %}
+                    {% include 'article/_like_button.html.twig' %}
+                    <a href="{{ path('article_show', {'id': article_une.id}) }}" class="article-readmore">
+                        Lire la suite {{ ux_icon('bi:arrow-right') }}
+                    </a>
                 </div>
             </div>
         </div>

@@ -1,27 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Details de l'article{% endblock %}
+{% block title %}{{ article.titre }} - Bolonews{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>{{ article.titre }}</h1>
-        <div class="article-details">
-            <div class="article-image">
-                {% if article.image %}
-                    <img src="{{ asset('images/articles/' ~ article.image) }}" alt="{{ article.titre }}">
-                {% else %}
-                    <div class="img-placeholder"></div>
-                {% endif %}
-            </div>
-            <div class="article-content">
-                <p>{{ article.chapeau }}</p>
-                <div class="article-author-block">
-                    <span class="article-author">{{ article.auteur.pseudo }}</span>
-                    <span class="article-date">publié le {{ article.dateCreation|date('d-m-Y à H:i') }}</span>
+    <article class="article-show">
+        <div class="container">
+            {% if article.categorie %}
+                <div class="article-category-badge">
+                    <span class="category-label">{{ article.categorie.libelle }}</span>
                 </div>
-                <div class="article-text">{{ article.contenu|raw }}</div>
+            {% endif %}
+
+            <header class="article-header">
+                <h1 class="article-title">{{ article.titre }}</h1>
+                
+                <div class="article-meta">
+                    <span class="article-date">publié le {{ article.dateCreation|date('d/m/Y à H:i') }}</span>
+                    {% if article.dateCreation != article.dateModification %}
+                        <span class="article-date">  /  modifié le {{ article.dateModification|date('d/m/Y à H:i') }}</span>
+                    {% endif %}
+                </div>
+            </header>
+
+            {% if article.chapeau %}
+                <div class="article-lead">
+                    <p>{{ article.chapeau }}</p>
+                </div>
+            {% endif %}
+
+            {% if article.image %}
+                <div class="article-image">
+                    <img src="{{ asset('images/articles/' ~ article.image) }}" alt="{{ article.titre }}" class="img-responsive">
+                </div>
+            {% endif %}
+
+            <div class="article-content">
+                {{ article.contenu|raw }}
+            </div>
+
+            <footer class="article-footer">
+                <div class="author-info">
+                    <span class="author-name">{{ article.auteur.pseudo }}</span>
+                </div>
+                
+                <div class="article-interactions">
+                    <span class="interaction-item">
+                        {{ ux_icon('bi:chat') }} {{ article.commentaires|length }}
+                    </span>
+                    <div class="interaction-item">
+                        {% include 'article/_like_button.html.twig' %}
+                    </div>
+                </div>
+            </footer>
+
+            <div class="article-navigation">
+                <a href="{{ app.request.headers.get('referer') ?: path('article_index') }}" class="btn btn-secondary">
+                    {{ ux_icon('bi:arrow-left') }} Retour
+                </a>
+            </div>
+
+            <div class="comments-wrapper">
+                {% include 'article/_comment_form.html.twig' %}
+                {% include 'article/_comments_list.html.twig' %}
             </div>
         </div>
-        <a href="{{ app.request.headers.get('referer') ?: path('article_index') }}" class="btn">Retour</a>
-    </div>
+    </article>
 {% endblock %}

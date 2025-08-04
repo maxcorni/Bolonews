@@ -18,9 +18,7 @@
                 <span class="article-comments">
                     {{ ux_icon('bi:chat') }} {{ article.commentaires|length }}
                 </span>
-                <span class="article-likes">
-                    {{ ux_icon('bi:heart') }} {{ article.liked|length }}
-                </span>
+                {% include 'article/_like_button.html.twig' %}
                 <a href="{{ path('article_show', {'id': article.id}) }}" class="article-readmore">
                     Lire la suite {{ ux_icon('bi:arrow-right') }}
                 </a>

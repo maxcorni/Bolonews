@@ -13,11 +13,12 @@
                 <span class="article-category">{{ article.categorie.libelle }}</span>
                 <form method="post" action="{{ path('article_toggle_publish', {'id': article.id}) }}">
                     {% if article.publie %}
-                        <button type="submit" class="article-category">Dépublier</button>
+                        <button type="submit" class="btn btn-warning btn-sm">Dépublier</button>
                     {% else %}
-                        <button type="submit" class="article-category">Publier</button>
+                        <button type="submit" class="btn btn-success btn-sm">Publier</button>
                     {% endif %}
                 </form>
+                <a href="{{ path('article_edit', {'id': article.id}) }}" class="btn btn-secondary btn-sm">Editer</a>
             </div>
             <h2 class="article-title">{{ article.titre }}</h2>
             <div class="article-author">{{ article.auteur.pseudo }}</div>
@@ -27,9 +28,7 @@
                 <span class="article-comments">
                     {{ ux_icon('bi:chat') }} {{ article.commentaires|length }}
                 </span>
-                <span class="article-likes">
-                    {{ ux_icon('bi:heart') }} {{ article.liked|length }}
-                </span>
+                {% include 'article/_like_button.html.twig' %}
                 <a href="{{ path('article_user_show', {'id': article.id}) }}" class="article-readmore">
                     Lire la suite {{ ux_icon('bi:arrow-right') }}
                 </a>

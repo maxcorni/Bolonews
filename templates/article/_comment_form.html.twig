@@ -1,0 +1,22 @@
+{% if app.user %}
+    <div class="comment-form-section">
+        <h3>Laisser un commentaire</h3>
+        <div class="comment-form-wrapper">
+            <div class="comment-form-content">
+                {{ form_start(commentForm, {'attr': {'class': 'comment-form'}}) }}
+                    {{ form_widget(commentForm.contenu) }}
+                    <div class="form-actions">
+                        {{ form_widget(commentForm.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                    </div>
+                {{ form_end(commentForm) }}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="comment-login-prompt">
+        <p>
+            <a href="{{ path('app_login') }}" class="btn btn-outline-primary">Connectez-vous</a> 
+            pour laisser un commentaire
+        </p>
+    </div>
+{% endif %}

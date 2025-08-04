@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un article - Bolonews{% endblock %}
+{% block title %}Modifier l'article - {{ article.titre }}{% endblock %}
 
 {% block body %}
     <div class="container">
         <div class="article-form-wrapper">
             <div class="article-form-header">
-                <h1>{{ ux_icon('bi:plus-circle') }} Créer un nouvel article</h1>
-                <p class="form-description">Partagez votre contenu avec la communauté</p>
+                <h1>{{ ux_icon('bi:pencil-square') }} Modifier l'article</h1>
+                <p class="form-description">Apportez vos modifications à "{{ article.titre }}"</p>
             </div>
 
             {{ form_start(form, {'attr': {'class': 'article-form', 'enctype': 'multipart/form-data'}}) }}
@@ -43,10 +43,16 @@
 
                         <div class="form-group">
                             {{ form_label(form.imageFile, 'Image de l\'article') }}
+                            {% if article.image %}
+                                <div class="current-image">
+                                    <img src="{{ asset('images/articles/' ~ article.image) }}" alt="{{ article.titre }}" class="preview-image">
+                                    <p class="image-info">Image actuelle</p>
+                                </div>
+                            {% endif %}
                             <div class="file-input-wrapper">
                                 {{ form_widget(form.imageFile, {'attr': {'class': 'file-input', 'accept': 'image/*'}}) }}
                                 <div class="file-input-info">
-                                    <small>JPG, PNG - Max 2MB</small>
+                                    <small>Choisir une nouvelle image (JPG, PNG - Max 2MB)</small>
                                 </div>
                             </div>
                             {{ form_errors(form.imageFile) }}
@@ -55,7 +61,7 @@
                         <div class="form-group checkbox-group">
                             <div class="checkbox-wrapper">
                                 {{ form_widget(form.publie, {'attr': {'class': 'checkbox-input'}}) }}
-                                {{ form_label(form.publie, 'Publier immédiatement', {'label_attr': {'class': 'checkbox-label'}}) }}
+                                {{ form_label(form.publie, 'Article publié', {'label_attr': {'class': 'checkbox-label'}}) }}
                             </div>
                             {{ form_errors(form.publie) }}
                         </div>
@@ -67,7 +73,7 @@
                         {{ ux_icon('bi:arrow-left') }} Annuler
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        {{ ux_icon('bi:check-circle') }} Créer l'article
+                        {{ ux_icon('bi:check-circle') }} Sauvegarder les modifications
                     </button>
                 </div>
             {{ form_end(form) }}

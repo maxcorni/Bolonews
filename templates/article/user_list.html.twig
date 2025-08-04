@@ -6,8 +6,11 @@
 {% block body %}
 	{% include 'article/_filter.html.twig' %}
 	<div class="container">
-		<a href="{{ path('article_create') }}" class="primary-btn">Créer un nouvel article</a>
-		<a href="{{ path('user_profile', {'id': app.user.id}) }}" class="primary-btn">Voir le profile utilisateur</a>
+		<div class="user-actions">
+			<a href="{{ path('article_create') }}" class="btn btn-primary">Créer un nouvel article</a>
+			<a href="{{ path('user_profile', {'id': app.user.id}) }}" class="btn btn-secondary">Voir le profil utilisateur</a>
+		</div>
+		<h1>Liste des articles de {{ app.user.pseudo }}</h1>
 		<h2>Mes Articles Publiés</h2>
 		<ul class="article-list">
 			{% if publishedArticles is empty %}
