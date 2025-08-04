@@ -102,15 +102,16 @@ class ArticleRepository extends ServiceEntityRepository
         public function findMostLikedByPeriod(?string $period = null): ?Article
         {
             $qb = $this->createQueryBuilder('a')
-                ->leftJoin('a.liked', 'l')
-                ->andWhere('a.publie = true');
+            ->leftJoin('a.liked', 'l')
+            ->andWhere('a.publie = true');
 
             if ($period) {
-                $qb->andWhere('a.date_creation >= :date')
+            $qb->andWhere('a.date_creation >= :date')
                 ->setParameter('date', new \DateTime($period));
             }
 
             $qb->groupBy('a.id')
+            ->having('COUNT(l.id) > 0')
             ->orderBy('COUNT(l.id)', 'DESC')
             ->setMaxResults(1);
 
@@ -121,12 +122,12 @@ class ArticleRepository extends ServiceEntityRepository
         {
             $article = $this->findMostLikedByPeriod('-24 hours');
             if ($article) {
-                return $article;
+            return $article;
             }
 
             $article = $this->findMostLikedByPeriod('-7 days');
             if ($article) {
-                return $article;
+            return $article;
             }
 
             return $this->findMostLikedByPeriod();
