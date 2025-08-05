@@ -36,6 +36,7 @@ class Article
         minMessage: "Le chapeau doit contenir au moins {{ limit }} caractères",
         maxMessage: "Le chapeau ne peut pas dépasser {{ limit }} caractères"
     )]
+    
     private ?string $chapeau = null;
 
     #[ORM\Column(type: Types::TEXT)]

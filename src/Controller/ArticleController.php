@@ -16,10 +16,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-#[Route("/article")]
 final class ArticleController extends AbstractController
 {
-    #[Route('', name: 'article_index')]
+    #[Route('/', name: 'article_index')]
     public function index(ArticleRepository $ArticleRepository): Response
     {
         // Role : Affiche l'article à la une et les 4 derniers articles publiés
@@ -41,7 +40,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/list', name: 'article_list')]
+    #[Route('/article/list', name: 'article_list')]
     public function list(ArticleRepository $ArticleRepository, Request $request, CategorieRepository $CategorieRepository): Response {
 
         // Role : Affiche un formulaire de recherche une liste de filtre de catégorie et la liste des articles correspondants
@@ -88,7 +87,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/user-list', name: 'article_user_list')]
+    #[Route('/article/user-list', name: 'article_user_list')]
     public function userList(ArticleRepository $ArticleRepository, Request $request, CategorieRepository $CategorieRepository): Response
     {
         // Role : Affiche un formulaire de recherche une liste de filtre de catégorie et la liste des articles correspondants ainsi que ceux de l'utilisateur connecté
@@ -146,7 +145,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/user-show/{id}', name: 'article_user_show')]
+    #[Route('/article/user-show/{id}', name: 'article_user_show')]
     public function userShow(int $id, ArticleRepository $ArticleRepository, Request $request, EntityManagerInterface $em): Response
     {
 
@@ -192,7 +191,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/show/{id}', name: 'article_show')]
+    #[Route('/article/show/{id}', name: 'article_show')]
     public function show(int $id, ArticleRepository $ArticleRepository, Request $request, EntityManagerInterface $em): Response
     {
 
@@ -234,7 +233,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'article_create')]
+    #[Route('/article/create', name: 'article_create')]
     public function create(Request $resquest, EntityManagerInterface $em): Response
     {
         // Role : Affiche un formulaire de création d'article
@@ -275,7 +274,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'article_edit')]
+    #[Route('/article/edit/{id}', name: 'article_edit')]
     public function edit(int $id, Request $request, EntityManagerInterface $em, ArticleRepository $articleRepository): Response
     {
         // Role : Affiche un formulaire de modification d'article prérempli
@@ -333,7 +332,7 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/toggle-publish/{id}', name: 'article_toggle_publish', methods: ['POST'])]
+    #[Route('/article/toggle-publish/{id}', name: 'article_toggle_publish', methods: ['POST'])]
     public function togglePublish(int $id, ArticleRepository $articleRepository, EntityManagerInterface $em): Response
     {
         // Role : Permet de basculer l'état de publication d'un article
@@ -365,7 +364,7 @@ final class ArticleController extends AbstractController
         return $this->redirectToRoute('article_user_list');
     }
 
-    #[Route('/toggle-like/{id}', name: 'article_toggle_like', methods: ['POST'])]
+    #[Route('/article/toggle-like/{id}', name: 'article_toggle_like', methods: ['POST'])]
     public function toggleLike(int $id, ArticleRepository $articleRepository, EntityManagerInterface $em, Request $request): Response
     {
         // Role : Permet de basculer l'état de like d'un article

@@ -12,13 +12,14 @@
     
         {{ form_start(form, {'attr' : {'novalidate': 'novalidate', 'data-turbo': 'false','class': 'user-form'}}) }}
         <h1>Bonjour {{ user.pseudo }}</h1>
-        <img src="{{ asset('images/photoProfile/' ~ user.profilePicture) }}" alt="User Profile" class="user-profile-image">
-
-        {{ form_label(form.email) }}
-        {{ form_widget(form.email, {'attr': {'class':(form.email.vars.errors|length > 0 ? "input-errors" : "")}}) }}
-        <div class="p-error">
-            {{ form_errors(form.email) }}
-        </div>
+        {% if user.profilePicture %}
+            <img src="{{ asset('images/photoProfile/' ~ user.profilePicture) }}" alt="{{ user.pseudo }}" class="user-profile-image">
+        {% else %}
+            <div class="avatar-placeholder">
+                {# Affiche les initiales de l'utilisateur a la place de l'image de profil #}
+                {{ user.pseudo|split(' ')|map(v => v|slice(0,1)|upper)|join('') }}
+            </div>
+        {% endif %}
 
         {{ form_label(form.pseudo) }}
         {{ form_widget(form.pseudo, {'attr': {'class':(form.pseudo.vars.errors|length > 0 ? "input-errors" : "")}}) }}
@@ -34,8 +35,9 @@
 
         {{ form_widget(form) }}
 
-        <input type="submit" value="Enregistrer" class="btn btn-primary">
-
+        <button class="btn btn-primary" type="submit">
+            Enregistrer
+        </button>
         {{ form_end(form) }}
 
     </div>
