@@ -1,4 +1,14 @@
 
+/**
+ * Gère les interactions de like sur les articles.
+ * 
+ * - Ajoute un écouteur d'événement au chargement du DOM pour détecter les clics sur les boutons de like.
+ * - Lorsqu'un bouton de like est cliqué, envoie une requête POST pour basculer l'état du like de l'article correspondant.
+ * - Met à jour l'interface utilisateur en fonction de la réponse du serveur (état du like et compteur de likes).
+ * - Ajoute une animation lors du clic et désactive temporairement le bouton pour éviter les clics multiples.
+ * - Reactive le bouton après la réponse du serveur.
+ */
+
 document.addEventListener('DOMContentLoaded', function() {
     
 
@@ -14,12 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const articleId = button.getAttribute('data-article-id');
-        
-        // Add loading state
         button.disabled = true;
         button.classList.add('animating');
 
-        // Make AJAX request
         fetch(`/article/toggle-like/${articleId}`, {
             method: 'POST',
             headers: {
@@ -36,17 +43,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             if (data.success) {
-                // Update button state
                 button.setAttribute('data-liked', data.liked.toString());
                 
-                // Update visual state
                 if (data.liked) {
                     button.classList.add('liked');
                 } else {
                     button.classList.remove('liked');
                 }
-                
-                // Update like count
                 const countElement = button.querySelector('.like-count');
                 if (countElement) {
                     countElement.textContent = data.likeCount;
@@ -59,10 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Erreur:', error);
         })
         .finally(() => {
-            // Remove loading state
             button.disabled = false;
             
-            // Remove animation class after CSS animation completes
             setTimeout(() => {
                 button.classList.remove('animating');
             }, 600);

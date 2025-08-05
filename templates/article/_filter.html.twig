@@ -1,12 +1,21 @@
+{# 
+    Ce bloc affiche un formulaire de recherche et des filtres par catégorie pour la liste des articles.
+    Il adapte la route cible selon la page courante (liste générale ou liste utilisateur).
+#}
 
 {% block body %}
+    {# Récupère la route courante #}
     {% set currentRoute = app.request.attributes.get('_route') %}
+    {# Détermine la route cible pour les liens de filtre #}
     {% set targetRoute = currentRoute == 'article_user_list' ? 'article_user_list' : 'article_list' %}
     
     <div class="search-container">
+        {# Formulaire de recherche, méthode GET #}
         {{ form_start(form, {'method': 'GET', 'attr': {'class': 'search-form'}}) }}
             <div>
+                {# Champ de recherche #}
                 {{ form_widget(form.q, {'attr': {'class': 'search-bar'}}) }}
+                {# Si une catégorie est sélectionnée, ajoute un champ caché #}
                 {% if currentCategory %}
                     <input type="hidden" name="category" value="{{ currentCategory }}">
                 {% endif %}
@@ -20,11 +29,13 @@
     <div class="search-filter">
         <ul>
             <li>
+                {# Lien pour afficher tous les articles, actif si aucune catégorie sélectionnée #}
                 <a href="{{ path(targetRoute, currentSearch ? {'q': currentSearch} : {}) }}" 
                    class="{{ not currentCategory ? 'active' : '' }}">All</a>
             </li>
             {% for category in categories %}
                 <li>
+                    {# Lien pour filtrer par catégorie, actif si la catégorie est sélectionnée #}
                     <a href="{{ path(targetRoute, {'category': category.id} | merge(currentSearch ? {'q': currentSearch} : {})) }}" 
                        class="{{ currentCategory == category.id ? 'active' : '' }}">
                         {{ category.libelle }}

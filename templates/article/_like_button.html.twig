@@ -1,12 +1,22 @@
+{# 
+    Ce bloc affiche un bouton "J'aime" pour un article.
+    Il affiche le nombre de likes et permet à l'utilisateur de liker ou de ne pas liker l'article.
+    Si l'utilisateur n'est pas connecté, le bouton est désactivé et un message d'information est affiché.
+#}
+
+
+{# Vérifie si l'utilisateur est connecté et s'il a déjà aimé l'article #}
 {% set isLiked = app.user and article.liked.contains(app.user) %}
+
+{# Compte le nombre total de likes sur l'article #}
 {% set likeCount = article.liked|length %}
 
 <button 
-    class="like-button {{ isLiked ? 'liked' : '' }}" 
-    data-article-id="{{ article.id }}"
-    data-liked="{{ isLiked ? 'true' : 'false' }}"
-    {% if not app.user %}disabled title="Connectez-vous pour aimer cet article"{% endif %}
+    class="like-button {{ isLiked ? 'liked' : '' }}"  {# Ajoute la classe 'liked' si l'utilisateur a aimé #}
+    data-article-id="{{ article.id }}"                {# Stocke l'ID de l'article pour les requêtes JS #}
+    data-liked="{{ isLiked ? 'true' : 'false' }}"     {# Indique si l'utilisateur a aimé l'article #}
+    {% if not app.user %}disabled title="Connectez-vous pour aimer cet article"{% endif %} {# Désactive le bouton si l'utilisateur n'est pas connecté #}
 >
-    <span class="like-icon">{{ ux_icon('bi:heart') }}</span>
-    <span class="like-count">{{ likeCount }}</span>
+    <span class="like-icon">{{ ux_icon('bi:heart') }}</span> {# Affiche une icône de cœur #}
+    <span class="like-count">{{ likeCount }}</span>          {# Affiche le nombre de likes #}
 </button>

@@ -17,7 +17,6 @@ final class UserController extends AbstractController
     public function index(EntityManagerInterface $em,Request $Request): Response
     {
         $user = $this->getUser();
-        //dd($user);
 
         // Vérifie que l'utilisateur est connecté
         if (!$user instanceof User) {

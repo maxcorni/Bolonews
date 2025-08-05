@@ -1,3 +1,8 @@
+{# 
+    Ce bloc affiche la liste des commentaires d'un article.
+    Il affiche le nombre de commentaires, chaque commentaire avec l'auteur, la date et le contenu
+#}
+
 <div class="comments-section">
     <h3>Commentaires ({{ article.commentaires|length }})</h3>
     
@@ -10,7 +15,8 @@
                             <img src="{{ asset('images/photoProfile/' ~ comment.auteur.profilePicture) }}" alt="{{ comment.auteur.pseudo }}" class="avatar">
                         {% else %}
                             <div class="avatar-placeholder">
-                                {{ comment.auteur.pseudo|slice(0, 1)|upper }}
+                                {# Affiche les initiales de l'auteur du commentaire a la place de l'image de profil #}
+                                {{ comment.auteur.pseudo|split(' ')|map(v => v|slice(0,1)|upper)|join('') }}
                             </div>
                         {% endif %}
                     </div>

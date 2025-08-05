@@ -43,6 +43,9 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findBySearch($search): array
         {
+            // Cette méthode recherche les articles par titre, chapeau ou contenu
+            // et retourne uniquement les articles publiés, triés par date de création.
+
             return $this->createQueryBuilder('a')
                 ->andWhere('a.publie = true')
                 ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
@@ -54,6 +57,9 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findBySearchAndCategory($search, ?int $categoryId): array
         {
+            // Cette méthode recherche les articles par titre, chapeau ou contenu
+            // et filtre par catégorie si un ID de catégorie est fourni.
+
             $qb = $this->createQueryBuilder('a')
                 ->andWhere('a.publie = true')
                 ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
@@ -71,6 +77,10 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findBySearchAndAuthor($search, $author): array
         {
+            // Cette méthode recherche les articles par titre, chapeau ou contenu
+            // et filtre par auteur. Elle retourne uniquement les articles publiés, 
+            // triés par date de création.
+
             return $this->createQueryBuilder('a')
                 ->andWhere('a.auteur = :author')
                 ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
@@ -83,6 +93,10 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findBySearchAndCategoryAndAuthor($search, ?int $categoryId, $author): array
         {
+            // Cette méthode recherche les articles par titre, chapeau ou contenu,
+            // filtre par catégorie et auteur, et retourne uniquement les articles publiés,
+            // triés par date de création.
+
             $qb = $this->createQueryBuilder('a')
                 ->andWhere('a.auteur = :author')
                 ->andWhere('(a.titre LIKE :search OR a.chapeau LIKE :search OR a.contenu LIKE :search)')
@@ -101,6 +115,9 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findMostLikedByPeriod(?string $period = null): ?Article
         {
+            // Cette méthode trouve l'article le plus aimé dans une période donnée.
+            // Si aucune période n'est spécifiée, elle retourne l'article le plus aimé de tous les temps.
+
             $qb = $this->createQueryBuilder('a')
             ->leftJoin('a.liked', 'l')
             ->andWhere('a.publie = true');
@@ -120,6 +137,9 @@ class ArticleRepository extends ServiceEntityRepository
 
         public function findMostLikedInLast24HoursOrWeekOrAllTime(): ?Article
         {
+            // Cette méthode trouve l'article le plus aimé dans les dernières 24 heures,
+            // la dernière semaine, ou de tous les temps si aucun article n'est trouvé dans les périodes précédentes.
+            
             $article = $this->findMostLikedByPeriod('-24 hours');
             if ($article) {
             return $article;

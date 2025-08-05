@@ -1,3 +1,10 @@
+{# 
+    Ce bloc affiche un formulaire pour ajouter un commentaire à un article.
+    Il affiche un champ de texte pour le contenu du commentaire et un bouton de soumission.
+    Si l'utilisateur n'est pas connecté, il propose de se connecter pour commenter.
+#}
+
+
 {% if app.user %}
     <div class="comment-form-section">
         <h3>Laisser un commentaire</h3>
@@ -14,9 +21,6 @@
     </div>
 {% else %}
     <div class="comment-login-prompt">
-        <p>
-            <a href="{{ path('app_login') }}" class="btn btn-outline-primary">Connectez-vous</a> 
-            pour laisser un commentaire
-        </p>
+        <a href="{{ path('app_login') }}" class="btn btn-outline-primary">Connectez-vous pour laisser un commentaire</a> 
     </div>
 {% endif %}
